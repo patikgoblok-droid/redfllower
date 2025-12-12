@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunga Interaktif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .flower-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto 40px;
+        }
+        
+        .flower {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+        }
+        
+        .petal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background-color: #ff6b8b;
+            border-radius: 50% 50% 50% 0;
+            transform-origin: bottom right;
+            box-shadow: inset 0 0 10px rgba(255, 105, 180, 0.3);
+        }
+        
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-color: #ffd700;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+        
+        .stem {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 180px;
+            background-color: #228B22;
+            z-index: -1;
+        }
+        
+        .leaf {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background-color: #32CD32;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .leaf-left {
+            top: 70%;
+            left: 35%;
+            transform: rotate(-30deg);
+        }
+        
+        .leaf-right {
+            top: 70%;
+            left: 55%;
+            transform: rotate(30deg);
+        }
+        
+        .controls {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-container input[type="range"] {
+            flex-grow: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4a90e2;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .color-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-btn.active {
+            border-color: #4a5568;
+            transform: scale(1.1);
+        }
+        
+        .btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
+        }
+        
+        .btn:hover {
+            background-color: #3a7bc8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(74, 144, 226, 0.3);
+        }
+        
+        .btn-reset {
+            background-color: #718096;
+            margin-left: 15px;
+        }
+        
+        .btn-reset:hover {
+            background-color: #5a6a81;
+        }
+        
+        .instructions {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 600px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            color: #718096;
+            line-height: 1.6;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .petal-count {
+            font-weight: bold;
+            color: #4a90e2;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #718096;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .flower-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .flower {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .petal {
+                width: 75px;
+                height: 75px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .flower-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .flower {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .petal {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .controls, .instructions {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bunga Interaktif</h1>
+        <p class="subtitle">Ubah warna, ukuran, dan jumlah kelopak bunga sesuai keinginan Anda</p>
+         <p>Silakan hubungi kami di media sosial:</p>
+    <!-- Menggunakan ikon langsung -->
+    <i class="fab fa-twitter"></i> Twitter
+    <i class="fab fa-instagram"></i> Instagram
+    <i class="fab fa-whatsapp"></i> WhatsApp
+        <div class="flower-container">
+            <div class="flower" id="flower">
+                <!-- Kelopak bunga akan dihasilkan dengan JavaScript -->
+            </div>
+            <div class="stem"></div>
+            <div class="leaf leaf-left"></div>
+            <div class="leaf leaf-right"></div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Warna Kelopak:</label>
+                <div class="color-options" id="colorOptions">
+                    <!-- Tombol warna akan dihasilkan dengan JavaScript -->
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Jumlah Kelopak: <span class="petal-count" id="petalCount">8</span></label>
+                <div class="slider-container">
+                    <input type="range" id="petalSlider" min="4" max="16" value="8" step="2">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Ukuran Bunga: <span id="sizeValue">100%</span></label>
+                <div class="slider-container">
+                    <input type="range" id="sizeSlider" min="50" max="150" value="100">
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <button class="btn" id="animateBtn">Animasikan Bunga</button>
+                <button class="btn btn-reset" id="resetBtn">Reset ke Default</button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>Cara Menggunakan:</h3>
+            <ul>
+                <li>Pilih warna kelopak bunga dengan mengklik salah satu warna yang tersedia</li>
+                <li>Atur jumlah kelopak bunga menggunakan slider "Jumlah Kelopak"</li>
+                <li>Ubah ukuran bunga menggunakan slider "Ukuran Bunga"</li>
+                <li>Klik "Animasikan Bunga" untuk melihat bunga bermekaran</li>
+                <li>Klik "Reset ke Default" untuk mengembalikan semua pengaturan ke keadaan awal</li>
+            </ul>
+        </div>
+        
+        <footer>
+            Dibuat dengan HTML, CSS, dan JavaScript | Bunga Interaktif &copy; 2023
+        </footer>
+    </div>
+
+    <script>
+        // Data warna yang tersedia untuk bunga
+        const colors = [
+            { name: 'Merah Muda', value: '#ff6b8b' },
+            { name: 'Ungu', value: '#9b59b6' },
+            { name: 'Biru', value: '#3498db' },
+            { name: 'Kuning', value: '#f1c40f' },
+            { name: 'Oranye', value: '#e67e22' },
+            { name: 'Merah', value: '#e74c3c' },
+            { name: 'Hijau', value: '#2ecc71' },
+            { name: 'Putih', value: '#ecf0f1' }
+        ];
+
+        // Elemen DOM
+        const flower = document.getElementById('flower');
+        const colorOptions = document.getElementById('colorOptions');
+        const petalSlider = document.getElementById('petalSlider');
+        const petalCount = document.getElementById('petalCount');
+        const sizeSlider = document.getElementById('sizeSlider');
+        const sizeValue = document.getElementById('sizeValue');
+        const animateBtn = document.getElementById('animateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // State bunga
+        let currentColor = colors[0].value;
+        let petalNumber = parseInt(petalSlider.value);
+        let flowerSize = parseInt(sizeSlider.value);
+        let isAnimating = false;
+
+        // Inisialisasi tombol warna
+        function initColorButtons() {
+            colors.forEach(color => {
+                const button = document.createElement('div');
+                button.className = 'color-btn';
+                if (color.value === currentColor) button.classList.add('active');
+                button.style.backgroundColor = color.value;
+                button.setAttribute('title', color.name);
+                
+                button.addEventListener('click', () => {
+                    // Hapus kelas active dari semua tombol
+                    document.querySelectorAll('.color-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Tambahkan kelas active ke tombol yang diklik
+                    button.classList.add('active');
+                    
+                    // Perbarui warna bunga
+                    currentColor = color.value;
+                    updateFlower();
+                });
+                
+                colorOptions.appendChild(button);
+            });
+        }
+
+        // Buat kelopak bunga
+        function createPetals() {
+            // Hapus kelopak yang ada
+            const existingPetals = flower.querySelectorAll('.petal');
+            existingPetals.forEach(petal => petal.remove());
+            
+            // Buat kelopak baru
+            for (let i = 0; i < petalNumber; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.backgroundColor = currentColor;
+                
+                // Hitung sudut rotasi untuk setiap kelopak
+                const angle = (360 / petalNumber) * i;
+                petal.style.transform = `rotate(${angle}deg)`;
+                
+                flower.appendChild(petal);
+            }
+            
+            // Pastikan pusat bunga ada di atas kelopak
+            const center = document.createElement('div');
+            center.className = 'center';
+            flower.appendChild(center);
+        }
+
+        // Perbarui ukuran bunga
+        function updateFlowerSize() {
+            const size = flowerSize / 100;
+            flower.style.width = `${200 * size}px`;
+            flower.style.height = `${200 * size}px`;
+            
+            // Sesuaikan ukuran kelopak
+            const petals = flower.querySelectorAll('.petal');
+            petals.forEach(petal => {
+                petal.style.width = `${100 * size}px`;
+                petal.style.height = `${100 * size}px`;
+            });
+            
+            // Sesuaikan ukuran pusat bunga
+            const center = flower.querySelector('.center');
+            if (center) {
+                center.style.width = `${60 * size}px`;
+                center.style.height = `${60 * size}px`;
+            }
+            
+            // Tampilkan nilai ukuran
+            sizeValue.textContent = `${flowerSize}%`;
+        }
+
+        // Perbarui bunga
+        function updateFlower() {
+            createPetals();
+            updateFlowerSize();
+        }
+
+        // Animasi bunga bermekaran
+        function animateFlower() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            animateBtn.disabled = true;
+            animateBtn.textContent = 'Mekar...';
+            
+            // Reset transformasi bunga
+            flower.style.transition = 'transform 0.5s ease';
+            flower.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            
+            // Animasikan setiap kelopak
+            const petals = flower.querySelectorAll('.petal');
+            petals.forEach((petal, index) => {
+                // Reset posisi kelopak
+                petal.style.transition = 'all 0.8s ease';
+                petal.style.opacity = '0';
+                petal.style.transform = `rotate(${(360 / petals.length) * index}deg) scale(0.5)`;
+                
+                // Animasikan kelopak satu per satu
+                setTimeout(() => {
+                    petal.style.opacity = '1';
+                    petal.style.transform = `rotate(${(360 / petals.length) * index}deg) scale(1)`;
+                }, index * 100);
+            });
+            
+            // Animasikan pusat bunga
+            const center = flower.querySelector('.center');
+            if (center) {
+                center.style.transition = 'all 0.8s ease';
+                center.style.transform = 'translate(-50%, -50%) scale(0)';
+                
+                setTimeout(() => {
+                    center.style.transform = 'translate(-50%, -50%) scale(1)';
+                }, petals.length * 100);
+            }
+            
+            // Kembalikan ukuran bunga
+            setTimeout(() => {
+                flower.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 300);
+            
+            // Reset status animasi
+            setTimeout(() => {
+                isAnimating = false;
+                animateBtn.disabled = false;
+                animateBtn.textContent = 'Animasikan Bunga';
+                
+                // Hapus transisi setelah animasi selesai
+                setTimeout(() => {
+                    flower.style.transition = '';
+                    petals.forEach(petal => {
+                        petal.style.transition = '';
+                    });
+                    if (center) center.style.transition = '';
+                }, 100);
+            }, 1500);
+        }
+
+        // Reset ke pengaturan default
+        function resetFlower() {
+            // Reset warna ke default
+            currentColor = colors[0].value;
+            document.querySelectorAll('.color-btn').forEach((btn, index) => {
+                btn.classList.remove('active');
+                if (index === 0) btn.classList.add('active');
+            });
+            
+            // Reset jumlah kelopak
+            petalSlider.value = 8;
+            petalNumber = 8;
+            petalCount.textContent = '8';
+            
+            // Reset ukuran bunga
+            sizeSlider.value = 100;
+            flowerSize = 100;
+            sizeValue.textContent = '100%';
+            
+            // Perbarui bunga
+            updateFlower();
+        }
+
+        // Event listeners
+        petalSlider.addEventListener('input', () => {
+            petalNumber = parseInt(petalSlider.value);
+            petalCount.textContent = petalNumber;
+            updateFlower();
+        });
+
+        sizeSlider.addEventListener('input', () => {
+            flowerSize = parseInt(sizeSlider.value);
+            updateFlower();
+        });
+
+        animateBtn.addEventListener('click', animateFlower);
+        resetBtn.addEventListener('click', resetFlower);
+
+        // Inisialisasi
+        function init() {
+            initColorButtons();
+            updateFlower();
+        }
+
+        // Jalankan inisialisasi ketika halaman dimuat
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
